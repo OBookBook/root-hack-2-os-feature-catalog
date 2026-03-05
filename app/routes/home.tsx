@@ -1,13 +1,13 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import Catalog from "../catalog/catalog";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "one-stream 全機能カタログ" },
+    { name: "description", content: "プランごとに使える全機能を目的別にわかりやすく確認できます" },
   ];
 }
 
-export default function Home() {
-  return <Welcome />;
+export default function Page() {
+  return <Catalog />;
 }
