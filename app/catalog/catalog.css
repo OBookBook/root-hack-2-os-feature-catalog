@@ -97,22 +97,32 @@
   border-radius: var(--radius-sm); cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
   display: flex; align-items: center; gap: 14px;
+  position: relative;
 }
-.plan-card:hover { border-color: var(--brand); background: rgba(94, 114, 228, 0.02); }
-.plan-card.selected { border-color: var(--brand); background: rgba(94, 114, 228, 0.06); }
+.plan-card:hover { background: rgba(0, 0, 0, 0.01); }
+.plan-card.selected { }
+.plan-color-bar {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  opacity: 0.3; transition: opacity 0.15s;
+}
+.plan-card.selected .plan-color-bar { opacity: 1; }
 .plan-radio {
   width: 22px; height: 22px; border-radius: 50%;
   border: 2px solid var(--gray40); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   transition: border-color 0.15s, background 0.15s;
 }
-.plan-card.selected .plan-radio { border-color: var(--brand); background: var(--brand); }
 .plan-radio-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--cat-white); display: none;
 }
 .plan-card.selected .plan-radio-dot { display: block; }
 .plan-name { font-weight: 700; font-size: 1rem; }
+.plan-feature-count {
+  font-weight: 600; font-size: 0.75rem; padding: 2px 8px;
+  border-radius: 10px; margin-left: 8;
+}
 .plan-desc { font-size: 0.8rem; color: var(--gray60); margin-top: 2px; }
 .plan-nav { display: flex; gap: 12px; margin-top: 28px; }
 .plan-nav .btn { flex: 1; }
@@ -149,7 +159,7 @@
 
 .purpose-meta { flex-shrink: 0; text-align: right; }
 .purpose-count {
-  font-size: 0.8rem; font-weight: 700; color: var(--brand);
+  font-size: 0.8rem; font-weight: 700;
 }
 .purpose-bar {
   width: 48px; height: 4px; background: var(--gray20);
@@ -157,7 +167,6 @@
 }
 .purpose-bar-fill {
   height: 100%; border-radius: 2px;
-  background: linear-gradient(90deg, var(--brand), var(--accent));
 }
 
 /* ===== Feature List ===== */
@@ -179,9 +188,7 @@
   user-select: none;
 }
 .fl-plan-tab:hover { color: var(--gray80); }
-.fl-plan-tab.active {
-  color: var(--brand); border-bottom-color: var(--brand);
-}
+.fl-plan-tab.active { }
 
 .fl-feature {
   display: flex; align-items: flex-start; gap: 12px;
@@ -196,7 +203,6 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; line-height: 1;
 }
-.fl-check.included { background: var(--success-light); color: var(--success); }
 .fl-check.not-included { background: var(--gray20); color: var(--gray50); }
 
 .fl-body { flex: 1; min-width: 0; }
@@ -205,12 +211,6 @@
 .fl-plan-tag {
   font-size: 0.65rem; font-weight: 600; padding: 2px 8px;
   border-radius: 8px; flex-shrink: 0; margin-top: 3px;
-}
-.fl-plan-tag.included {
-  background: var(--success-light); color: var(--success);
-}
-.fl-plan-tag.upgrade {
-  background: rgba(104, 86, 255, 0.1); color: var(--accent);
 }
 
 .fl-empty {
@@ -254,8 +254,8 @@
 .upgrade-section { margin-top: 24px; }
 .upgrade-item {
   display: flex; align-items: flex-start; gap: 10px;
-  padding: 12px 14px; border: 1px solid rgba(104, 86, 255, 0.2);
-  border-radius: var(--radius-sm); background: rgba(104, 86, 255, 0.03);
+  padding: 12px 14px; border: 1px solid var(--gray30);
+  border-radius: var(--radius-sm); background: var(--gray10);
   margin-bottom: 8px;
 }
 .upgrade-body { flex: 1; }
@@ -263,7 +263,7 @@
 .upgrade-name { font-size: 0.9rem; font-weight: 600; }
 .upgrade-plan-tag {
   font-size: 0.65rem; font-weight: 600; padding: 1px 6px;
-  border-radius: 8px; background: rgba(104, 86, 255, 0.1); color: var(--accent);
+  border-radius: 8px;
 }
 .upgrade-desc { font-size: 0.78rem; color: var(--gray60); margin-top: 1px; }
 
