@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   PLAN_LIST,
   PLAN_NAMES,
+  PLAN_COLORS,
   PURPOSES,
   FEATURES,
   isAvail,
@@ -125,17 +126,29 @@ function PlanScreen({
         <div className="plan-grid">
           {PLAN_LIST.map(p => {
             const cnt = allAvail(p.id).length
+            const color = PLAN_COLORS[p.id]
+            const isSelected = selectedPlan === p.id
             return (
               <div
                 key={p.id}
-                className={`plan-card ${selectedPlan === p.id ? 'selected' : ''}`}
+                className={`plan-card ${isSelected ? 'selected' : ''}`}
+                style={{
+                  borderColor: isSelected ? color.main : undefined,
+                  background: isSelected ? color.bg : undefined,
+                }}
                 onClick={() => onSelect(p.id)}
               >
-                <div className="plan-radio"><div className="plan-radio-dot" /></div>
+                <div className="plan-color-bar" style={{ background: color.main }} />
+                <div className="plan-radio" style={isSelected ? { borderColor: color.main, background: color.main } : undefined}>
+                  <div className="plan-radio-dot" />
+                </div>
                 <div style={{ flex: 1 }}>
                   <div className="plan-name">
                     {p.name}
-                    <span style={{ fontWeight: 400, fontSize: '0.8rem', color: 'var(--gray60)', marginLeft: 8 }}>
+                    <span
+                      className="plan-feature-count"
+                      style={{ background: color.light, color: color.main }}
+                    >
                       {cnt} 機能
                     </span>
                   </div>
@@ -167,11 +180,12 @@ function PurposeScreen({
 }) {
   const total = allAvail(plan).length
   const allTotal = FEATURES.length
+  const color = PLAN_COLORS[plan]
 
   return (
     <div className="screen">
       <div className="card">
-        <div className="purpose-hero">
+        <div className="purpose-hero" style={{ background: color.gradient }}>
           <div className="purpose-hero-plan">{plan} プラン</div>
           <div className="purpose-hero-count">{total} / {allTotal} 機能が利用可能</div>
         </div>
@@ -191,11 +205,11 @@ function PurposeScreen({
                   <div className="purpose-desc">{p.desc}</div>
                 </div>
                 <div className="purpose-meta">
-                  <div className="purpose-count">
+                  <div className="purpose-count" style={{ color: color.main }}>
                     {availCnt}<span style={{ fontWeight: 400, color: 'var(--gray50)' }}>/{totalCnt}</span>
                   </div>
                   <div className="purpose-bar">
-                    <div className="purpose-bar-fill" style={{ width: `${pct}%` }} />
+                    <div className="purpose-bar-fill" style={{ width: `${pct}%`, background: color.gradient }} />
                   </div>
                 </div>
               </div>
@@ -230,6 +244,7 @@ function FeatureScreen({
   const feats = featsByPurpose(purpose.id)
   const included = feats.filter(f => isAvail(f, viewPlan))
   const notIncluded = feats.filter(f => !isAvail(f, viewPlan))
+  const viewColor = PLAN_COLORS[viewPlan]
 
   return (
     <div className="screen">
@@ -240,28 +255,36 @@ function FeatureScreen({
         </div>
         <p className="fl-desc">{purpose.desc}</p>
         <div className="fl-plan-tabs">
-          {PLAN_NAMES.map(pn => (
-            <div
-              key={pn}
-              className={`fl-plan-tab ${pn === viewPlan ? 'active' : ''}`}
-              onClick={() => onChangeViewPlan(pn)}
-            >
-              {pn}{pn === userPlan && <span style={{ fontSize: '0.65rem', fontWeight: 400 }}> (現在)</span>}
-            </div>
-          ))}
+          {PLAN_NAMES.map(pn => {
+            const tabColor = PLAN_COLORS[pn]
+            const isActive = pn === viewPlan
+            return (
+              <div
+                key={pn}
+                className={`fl-plan-tab ${isActive ? 'active' : ''}`}
+                style={isActive ? { color: tabColor.main, borderBottomColor: tabColor.main } : undefined}
+                onClick={() => onChangeViewPlan(pn)}
+              >
+                {pn}{pn === userPlan && <span style={{ fontSize: '0.65rem', fontWeight: 400 }}> (現在)</span>}
+              </div>
+            )
+          })}
         </div>
         <div>
           {included.length > 0 ? (
-            included.map(f => (
-              <div key={f.key} className="fl-feature">
-                <div className="fl-check included">&#10003;</div>
-                <div className="fl-body">
-                  <div className="fl-name">{f.name}</div>
-                  <div className="fl-fdesc">{f.desc}</div>
+            included.map(f => {
+              const fColor = PLAN_COLORS[f.plan]
+              return (
+                <div key={f.key} className="fl-feature">
+                  <div className="fl-check" style={{ background: viewColor.light, color: viewColor.main }}>&#10003;</div>
+                  <div className="fl-body">
+                    <div className="fl-name">{f.name}</div>
+                    <div className="fl-fdesc">{f.desc}</div>
+                  </div>
+                  <span className="fl-plan-tag" style={{ background: fColor.light, color: fColor.main }}>{f.plan}</span>
                 </div>
-                <span className="fl-plan-tag included">{f.plan}</span>
-              </div>
-            ))
+              )
+            })
           ) : (
             <div className="fl-empty">このプランで利用可能な機能はありません</div>
           )}
@@ -270,16 +293,19 @@ function FeatureScreen({
               <div style={{ fontSize: '0.78rem', color: 'var(--gray60)', padding: '12px 14px 4px', fontWeight: 600 }}>
                 上位プランで利用可能
               </div>
-              {notIncluded.map(f => (
-                <div key={f.key} className="fl-feature unavailable">
-                  <div className="fl-check not-included">&minus;</div>
-                  <div className="fl-body">
-                    <div className="fl-name">{f.name}</div>
-                    <div className="fl-fdesc">{f.desc}</div>
+              {notIncluded.map(f => {
+                const fColor = PLAN_COLORS[f.plan]
+                return (
+                  <div key={f.key} className="fl-feature unavailable">
+                    <div className="fl-check not-included">&minus;</div>
+                    <div className="fl-body">
+                      <div className="fl-name">{f.name}</div>
+                      <div className="fl-fdesc">{f.desc}</div>
+                    </div>
+                    <span className="fl-plan-tag" style={{ background: fColor.light, color: fColor.main }}>{f.plan}~</span>
                   </div>
-                  <span className="fl-plan-tag upgrade">{f.plan}~</span>
-                </div>
-              ))}
+                )
+              })}
             </>
           )}
         </div>
@@ -305,13 +331,14 @@ function SummaryScreen({
   const [showAll, setShowAll] = useState(false)
   const total = allAvail(plan).length
   const allTotal = FEATURES.length
+  const color = PLAN_COLORS[plan]
   const upgrades = FEATURES.filter(f => !isAvail(f, plan))
   const upgradeTop = upgrades.slice(0, 5)
   const upgradeRest = upgrades.slice(5)
 
   return (
     <div className="screen">
-      <div className="summary-hero">
+      <div className="summary-hero" style={{ background: color.gradient }}>
         <div className="summary-hero-label">one-stream 全機能カタログ</div>
         <div className="summary-hero-plan">{plan} プラン</div>
         <div className="summary-hero-count">{total} / {allTotal} 機能が利用可能</div>
@@ -346,29 +373,35 @@ function SummaryScreen({
             <span>{'\u{1F680}'}</span> 上位プランで使える機能（{upgrades.length}件）
           </div>
           <div>
-            {upgradeTop.map(f => (
-              <div key={f.key} className="upgrade-item">
+            {upgradeTop.map(f => {
+              const fColor = PLAN_COLORS[f.plan]
+              return (
+                <div key={f.key} className="upgrade-item" style={{ borderColor: `${fColor.main}33` }}>
+                  <div className="upgrade-body">
+                    <div className="upgrade-name-row">
+                      <span className="upgrade-name">{f.name}</span>
+                      <span className="upgrade-plan-tag" style={{ background: fColor.light, color: fColor.main }}>{f.plan}~</span>
+                    </div>
+                    <div className="upgrade-desc">{f.desc}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+          {showAll && upgradeRest.map(f => {
+            const fColor = PLAN_COLORS[f.plan]
+            return (
+              <div key={f.key} className="upgrade-item" style={{ borderColor: `${fColor.main}33` }}>
                 <div className="upgrade-body">
                   <div className="upgrade-name-row">
                     <span className="upgrade-name">{f.name}</span>
-                    <span className="upgrade-plan-tag">{f.plan}~</span>
+                    <span className="upgrade-plan-tag" style={{ background: fColor.light, color: fColor.main }}>{f.plan}~</span>
                   </div>
                   <div className="upgrade-desc">{f.desc}</div>
                 </div>
               </div>
-            ))}
-          </div>
-          {showAll && upgradeRest.map(f => (
-            <div key={f.key} className="upgrade-item">
-              <div className="upgrade-body">
-                <div className="upgrade-name-row">
-                  <span className="upgrade-name">{f.name}</span>
-                  <span className="upgrade-plan-tag">{f.plan}~</span>
-                </div>
-                <div className="upgrade-desc">{f.desc}</div>
-              </div>
-            </div>
-          ))}
+            )
+          })}
           {upgradeRest.length > 0 && (
             <button className="show-more-btn" onClick={() => setShowAll(!showAll)}>
               {showAll ? '閉じる' : `他 ${upgradeRest.length} 件を表示`}

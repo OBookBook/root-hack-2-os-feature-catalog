@@ -9,6 +9,40 @@ export const PLAN_NAMES = ['Basic', 'Pro', 'Business', 'Enterprise'] as const
 
 export type PlanId = (typeof PLAN_NAMES)[number]
 
+export interface PlanColor {
+  main: string
+  light: string
+  bg: string
+  gradient: string
+}
+
+export const PLAN_COLORS: { [key in PlanId]: PlanColor } = {
+  Basic: {
+    main: '#5E72E4',
+    light: '#E8EBFA',
+    bg: 'rgba(94, 114, 228, 0.06)',
+    gradient: 'linear-gradient(135deg, #5E72E4, #7B8BED)',
+  },
+  Pro: {
+    main: '#1AAE6F',
+    light: '#DCF9ED',
+    bg: 'rgba(26, 174, 111, 0.06)',
+    gradient: 'linear-gradient(135deg, #1AAE6F, #3CC98A)',
+  },
+  Business: {
+    main: '#FB6340',
+    light: '#FEE6E0',
+    bg: 'rgba(251, 99, 64, 0.06)',
+    gradient: 'linear-gradient(135deg, #FB6340, #FE8D6F)',
+  },
+  Enterprise: {
+    main: '#D4A017',
+    light: '#FDF5E0',
+    bg: 'rgba(212, 160, 23, 0.06)',
+    gradient: 'linear-gradient(135deg, #D4A017, #E6BB4E)',
+  },
+}
+
 export interface PlanInfo {
   id: PlanId
   name: string
